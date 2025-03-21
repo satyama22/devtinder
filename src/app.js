@@ -1,15 +1,22 @@
 const express = require("express");
 //console.log("server creation");
 const app=express();
-app.use( "/hello",(req,res) => {
-    res.send("hello helllloooooo");
+
+app.get("/user",(req,res)=>{
+    console.log("user data accessed successfully");
+    res.send({firstname:"akshaysaini",lastname:"kumar"});
 })
-app.use( "/test",(req,res) => {
-    res.send("hello im test");
+app.post("/user",(req,res)=>{
+    console.log(req.body);
+    res.send("data saved successfully to database");
 })
-app.use( (req,res) => {
+app.delete("/user",(req,res)=>{
+    
+    res.end("data deleted successfully");
+})
+app.use("/use" ,(req,res) => {
     res.send("hello everyone hii students");
 })
 app.listen(3000 , () => {
-    console.log("server is created succesfully on port number 3000 ");
+    console.log("server is created successfully on port number 3000 ");
 });
