@@ -14,6 +14,10 @@ app.delete("/user",(req,res)=>{
     
     res.end("data deleted successfully");
 })
+app.delete("/test",(req,res)=>{
+    console.log("deleted ");
+    res.end("data deleted successfully");
+})
 app.use("/use" ,(req,res) => {
     res.send("hello everyone hii students");
 })
