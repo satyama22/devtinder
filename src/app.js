@@ -1,21 +1,34 @@
 const express = require("express");
 //console.log("server creation");
 const app=express();
-const { adminAuth, userAuth}=require("./middlewares/auth.js")
 
-app.use("/admin",adminAuth)
-app.get("/user/data",userAuth,(req,res)=>{
-    res.send("data sent");
+const connectDB = require("./config/database");
+
+const User= require("./models/user.js");
+
+app.post("/signup",async (req,res)=>{
+
+    const user = new User({
+        firstName:"pooji",
+        lastName:"gundu",
+        age:21,
+        password:"rishi@123"
+    })
+ try{
+    await user.save();
+    res.send("data added successfully");
+   }catch(err){
+    res.status(400).send("some error occured"+err.message);
+   }
+
 })
-app.post("/user/loginData",(req,res)=>{
-    res.send("user log in successful");
+
+connectDB().then(()=>{
+    console.log("database connection established");
+
+     app.listen(3000 , () => {
+         console.log("server is created successfully on port number 3000 ");
+     });
+}).catch((err)=>{
+    console.log("database connection couldnt established");
 })
-app.get("/admin/getAllDAta",(req,res)=>{
-    res.send("all data is requested");
-})
-app.get("/admin/deleteAllDAta",(req,res)=>{
-    res.send("all data is deleted");
-})
-app.listen(3000 , () => {
-    console.log("server is created successfully on port number 3000 ");
-});
