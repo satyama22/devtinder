@@ -1,19 +1,13 @@
 const express = require("express");
 //console.log("server creation");
 const app=express();
-
 const connectDB = require("./config/database");
-
 const User= require("./models/user.js");
-
+app.use(express.json());
 app.post("/signup",async (req,res)=>{
 
-    const user = new User({
-        firstName:"pooji",
-        lastName:"gundu",
-        age:21,
-        password:"rishi@123"
-    })
+    const user = new User(req.body);
+    
  try{
     await user.save();
     res.send("data added successfully");
@@ -22,6 +16,8 @@ app.post("/signup",async (req,res)=>{
    }
 
 })
+
+
 
 connectDB().then(()=>{
     console.log("database connection established");
