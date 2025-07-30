@@ -40,6 +40,10 @@ const userSchema = new mongoose.Schema({
         minlength:7,
         maxlength:15,
     },
+    skills:{
+        type:[String],
+        default:[],
+    },
     about:{
         type:String,
         default:"this about is given by default by devTinder",
