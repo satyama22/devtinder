@@ -54,6 +54,21 @@ app.delete("/delete",async(req,res)=>{
             res.status(404).send("somethng went wrong"+err.message);
         }
 })
+
+app.patch("/update",async(req,res)=>{
+    const userId=req.body.userId;
+    const data=req.body
+    try{
+        const user=await User.findByIdAndUpdate({_id:userId},data,
+            {returnDocument:"before",
+             runValidators:true,
+            });
+        res.send("user updated successfully");
+        console.log(data);
+    }catch(err){
+        res.status(404).send("something wrong"+err.message);
+    }
+})
 connectDB().then(()=>{
     console.log("database connection established");
 
