@@ -1,12 +1,19 @@
 const express = require("express");
 //console.log("server creation");
 const app=express();
+
 const connectDB = require("./config/database");
 const User= require("./models/user.js");
 const { model } = require("mongoose");
 const {validateUserData} = require("./utils/validate.js");
-app.use(express.json());
 const bcrypt = require("bcrypt");
+const cookieParser=require("cookie-parser");
+const jwt=require("jsonwebtoken");
+const {userAuth}=require("./middlewares/auth.js");
+
+app.use(express.json());
+app.use(cookieParser());
+
 app.post("/signup",async (req,res)=>{
     try{
      //validate the user
@@ -36,6 +43,12 @@ app.post("/login",async(req,res)=>{
         }
         const isValidPassword =await bcrypt.compare(password, user.password);
         if(isValidPassword){
+
+            //creating jwt token
+            const token = await jwt.sign({_id: user._id},"Devtinder@123",{expiresIn:"1d"});
+            //console.log(token);
+            //
+            res.cookie("token",token,{ maxAge: 900000 });
             res.send("login was successful");
         }else{
             throw new Error("invalid credentials");
@@ -58,57 +71,26 @@ app.get("/user",async(req,res)=>{
     }
    
 })
-app.get("/feed",async (req,res)=>{
-    try{ 
-        const users=await User.find({});
-        if(users.length===0){
-            console.log("user not found");
-        }else{
-            res.send(users);
-        }
-    }catch(err){
+
+app.get("/profile",userAuth,async(req,res)=>{
+    try{
+        const user=req.user;
+        res.send(user);
+      }catch(err){
         res.status(404).send("something went wrong"+err.message);
     }
+});
+     
+app.post("/sendConnectionRequest",userAuth,async(req,res)=>{
+
+    const user=req.user;
+    console.log("sending connection request ");
+    res.send("connection request sent by "+user.firstName);
 })
 
-app.delete("/delete",async(req,res)=>{
-        const userId=req.body.userId;
-        try{
-            //const user= await User.findByIdAndDelete(userId);
-            const user= await User.findByIdAndDelete({_id:userId});
-            res.send("user deleted successfully");
-        }catch(err){
-            res.status(404).send("somethng went wrong"+err.message);
-        }
-})
 
-app.patch("/user/:userId",async(req,res)=>{
-    const userId=req.params?.userId;
-    const data=req.body
-
-    try{
-        const ALLOWED_UPDATES=["age","gender","about","photoUrl","userId","skills"];
-        const isUpdateAllowed=Object.keys(data).every((k)=>
-             ALLOWED_UPDATES.includes(k));
-        if (!isUpdateAllowed){
-            throw new Error("update is not allowed");
-        }
-        if(data?.skills.length > 10){
-            throw new Error("more than 10 skills are not allowed")
-        }
-        const user=await User.findByIdAndUpdate({_id:userId},data,
-            {returnDocument:"before",
-             runValidators:true,
-            });
-        res.send("user updated successfully");
-        console.log(data);
-    }catch(err){
-        res.status(404).send("something wrong"+err.message);
-    }
-})
 connectDB().then(()=>{
     console.log("database connection established");
-
      app.listen(3000 , () => {
          console.log("server is created successfully on port number 3000 ");
      });
