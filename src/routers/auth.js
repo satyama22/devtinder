@@ -6,7 +6,7 @@ const User= require("../models/user.js");
 const bcrypt = require("bcrypt");
 
 
-authRouter.post("/signup",async (req,res)=>{
+authRouter.post("/auth/signup",async (req,res)=>{
     try{
      //validate the user
        validateUserData(req);
@@ -37,10 +37,10 @@ authRouter.post("/login",async(req,res)=>{
           const isPasswordValid = await user.validatePassword(password);
   
           if(isPasswordValid){
-             //getting jwt token from userschema.moethods of user.js
+             //getting jwt token from userschema.methods of user.js
               const token = await user.getJWT();
               
-              res.cookie("token",token,{ maxAge: 900000 });
+              res.cookie("token",token,{ maxAge: 86400000 });
               res.send("login was successful");
           }else{
               throw new Error("invalid credentials");
@@ -49,6 +49,13 @@ authRouter.post("/login",async(req,res)=>{
       res.status(404).send("ERROR: "+err.message);
      }
   })
+
+authRouter.post("/logout",async(req,res)=>{
+     res.cookie("token",null,{
+        expires: new Date(Date.now()),
+     });
+     res.send("logged out successfully");
+})
 
 
 module.exports = authRouter;

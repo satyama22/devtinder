@@ -4,6 +4,8 @@ const app=express();
 
 const connectDB = require("./config/database");
 const User= require("./models/user.js");
+
+
 const { model } = require("mongoose");
 const {validateUserData} = require("./utils/validate.js");
 const bcrypt = require("bcrypt");
@@ -14,14 +16,15 @@ const {userAuth}=require("./middlewares/auth.js");
 app.use(express.json());
 app.use(cookieParser());
 
+const authRouter = require("./routers/auth.js");
+app.use("/auth", authRouter);
+
+const profileRouter = require("./routers/profile.js");
+app.use("/profile", profileRouter);
 
 
-
-
-
-     
-
-
+const requestRouter = require("./routers/request.js");
+app.use("/request", requestRouter);
 
 connectDB().then(()=>{
     console.log("database connection established");
