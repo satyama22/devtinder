@@ -3,15 +3,17 @@ const requestRouter=express.Router();
 
 const User= require("../models/user.js");
 const {userAuth}=require("../middlewares/auth.js");
-const ConnectionRequest=require("../models/ConncetionRequestModel");
+const ConnectionRequest=require("../models/connectionRequest.js");
 
 requestRouter.post("/request/send/:status/:toUserId",
     userAuth,
     async(req,res)=>{
         try{
-            const fromUserId=req.body.UserId
+            console.log("req.user:", req.user);
+
+            const fromUserId=req.user._id
             const toUserId=req.params.toUserId
-            const status=req.body.status
+            const status=req.params.status
 
             const allowedStatus=["likes","pass"]
             if(!allowedStatus.includes(status)){
@@ -21,7 +23,7 @@ requestRouter.post("/request/send/:status/:toUserId",
                     });
             }
             //check is toUserId present in Database
-            const toUser=await User.findOne({userId:toUserId});
+            const toUser=await User.findById(toUserId);
             if(!toUser){
                 return res.status(400).json({
                     message:"user not found",
@@ -51,7 +53,7 @@ requestRouter.post("/request/send/:status/:toUserId",
 
             const data=await connectionRequest.save();
             res.json({
-                message:re.user.firstName+"is"+status+"in"+toUser.firstName,
+                message: `${req.user.firstName} has ${status} ${toUser.firstName}`,
                 data,
             })
 
