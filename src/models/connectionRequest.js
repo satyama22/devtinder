@@ -24,6 +24,9 @@ const ConnectionRequestSchema= new mongoose.Schema({
     }
 );
 
+//you can create indexed by putting index true in schema fromUserid field itself and this one is compound indexing
+ConnectionRequestSchema.index({fromUserId:1},{toUserId:1});
+
 ConnectionRequestSchema.pre("save",function(next){
     //checking if fromUserId and toUserId are same 
     const connectionRequest=this;
