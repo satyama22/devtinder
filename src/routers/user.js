@@ -4,7 +4,7 @@ const userRouter=express.Router();
 const {userAuth}=require("../middlewares/auth.js");
 const ConnectionRequest=require("../models/connectionRequest.js")
 
-const USER_SAFE_DATA="firstName lastName age gender about skills photoUrl"
+const USER_SAFE_DATA="firstName lastName age gender about skills photoUrl";
 
 userRouter.get("/user/request/pending",userAuth, async (req,res)=>{
 
@@ -14,7 +14,7 @@ userRouter.get("/user/request/pending",userAuth, async (req,res)=>{
             const connectionRequests=await ConnectionRequest.find({
                 toUserId:loggedInUser._id,
                 status:"likes"
-            }).populate(USER_SAFE_DATA);
+            }).populate("fromUserId",USER_SAFE_DATA);
 
             res.json({
                 message:"connection requests fetched successfully",
