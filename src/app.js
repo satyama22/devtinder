@@ -26,6 +26,9 @@ app.use("/profile", profileRouter);
 const requestRouter = require("./routers/request.js");
 app.use("/request", requestRouter);
 
+const userRouter = require("./routers/user.js");
+app.use("/user",userRouter)
+
 connectDB().then(()=>{
     console.log("database connection established");
      app.listen(3000 , () => {

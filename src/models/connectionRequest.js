@@ -3,6 +3,7 @@ const { __esModule } = require("validator/lib/isAlpha");
 const ConnectionRequestSchema= new mongoose.Schema({
     fromUserId:{
         type:mongoose.Schema.Types.ObjectId,
+        ref:"User" ,//reference to User table like joins in Sql  it should given in string
         required:true,
     },
     toUserId:{
